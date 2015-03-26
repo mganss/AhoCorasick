@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AhoCorasick", "AhoCorasick\AhoCorasick.csproj", "{A1F19E27-06C8-4DB1-94CE-24B4F10330DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AhoCorasick.Tests", "AhoCorasick.Tests\AhoCorasick.Tests.csproj", "{860F4149-D7F3-495A-99BE-8AC3FBAE4176}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1F19E27-06C8-4DB1-94CE-24B4F10330DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F19E27-06C8-4DB1-94CE-24B4F10330DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F19E27-06C8-4DB1-94CE-24B4F10330DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F19E27-06C8-4DB1-94CE-24B4F10330DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{860F4149-D7F3-495A-99BE-8AC3FBAE4176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{860F4149-D7F3-495A-99BE-8AC3FBAE4176}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{860F4149-D7F3-495A-99BE-8AC3FBAE4176}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{860F4149-D7F3-495A-99BE-8AC3FBAE4176}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
