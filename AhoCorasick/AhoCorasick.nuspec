@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/mganss/AhoCorasick/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/mganss/AhoCorasick</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2015 Michael Ganss</copyright>
+    <tags>aho-corasick aho corasick string search match substring</tags>
+  </metadata>
+</package>

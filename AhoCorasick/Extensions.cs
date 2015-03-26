@@ -2,6 +2,9 @@
 
 namespace Ganss.Text
 {
+    /// <summary>
+    /// Provides extension methods.
+    /// </summary>
     public static class Extensions
     {
         /// <summary>
