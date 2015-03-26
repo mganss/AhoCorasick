@@ -62,5 +62,12 @@ namespace Ganss.Text.Tests
             var expected = new WordMatchList { { 0, "take" }, { 9, "sofa" }, { 11, "fast" }, { 19, "sofa" }, { 23, "take" }, { 34, "sofa" }, { 36, "fast" }, { 39, "take" } };
             CollectionAssert.AreEqual(expected, m);
         }
+
+        [Test]
+        public void StringExtensionTest()
+        {
+            var m = "abc".Contains("abd", "bc", "ab").ToList();
+            CollectionAssert.AreEqual(new WordMatchList { { 0, "ab" }, { 1, "bc" } }, m);
+        }
     }
 }
