@@ -69,5 +69,23 @@ namespace Ganss.Text.Tests
             var m = "abc".Contains("abd", "bc", "ab").ToList();
             CollectionAssert.AreEqual(new WordMatchList { { 0, "ab" }, { 1, "bc" } }, m);
         }
+
+        [Test]
+        public void UpperCaseTest()
+        {
+            var ac = new AhoCorasick("a", "ab", "bab", "bC", "bca", "c", "caa");
+            var m = ac.Search("abCcab").ToList();
+            var expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bC" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
+            CollectionAssert.AreEqual(expected, m);
+        }
+
+        [Test]
+        public void OrdinalIgnoreCaseTest()
+        {
+            var ac = new AhoCorasick(CharComparer.OrdinalIgnoreCase, "a", "ab", "bab", "bC", "bca", "c", "caa");
+            var m = ac.Search("abCcab").ToList();
+            var expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bC" }, { 2, "c" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
+            CollectionAssert.AreEqual(expected, m);
+        }
     }
 }

@@ -49,8 +49,19 @@ namespace Ganss.Text
         /// <summary>
         /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
         /// </summary>
+        /// <remarks>Does not build the failure nodes. Call <see cref="BuildFail"/> after adding words before calling <see cref="Search"/>.</remarks>
+        /// <param name="comparer">The comparer used to compare individual characters.</param>
+        public AhoCorasick(IEqualityComparer<char> comparer)
+        {
+            Trie = new Trie(comparer);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
+        /// </summary>
         /// <param name="words">The words to find.</param>
-        public AhoCorasick(params string[] words): this()
+        public AhoCorasick(params string[] words)
+            : this()
         {
             Add(words);
         }
@@ -59,7 +70,30 @@ namespace Ganss.Text
         /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
         /// </summary>
         /// <param name="words">The words to find.</param>
-        public AhoCorasick(IEnumerable<string> words): this()
+        public AhoCorasick(IEnumerable<string> words)
+            : this()
+        {
+            Add(words);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
+        /// </summary>
+        /// <param name="comparer">The comparer used to compare individual characters.</param>
+        /// <param name="words">The words to find.</param>
+        public AhoCorasick(IEqualityComparer<char> comparer, params string[] words)
+            : this(comparer)
+        {
+            Add(words);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
+        /// </summary>
+        /// <param name="comparer">The comparer used to compare individual characters.</param>
+        /// <param name="words">The words to find.</param>
+        public AhoCorasick(IEqualityComparer<char> comparer, IEnumerable<string> words)
+            : this(comparer)
         {
             Add(words);
         }

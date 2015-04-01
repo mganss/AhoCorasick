@@ -70,6 +70,15 @@ namespace Ganss.Text
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Trie"/> class.
+        /// </summary>
+        /// <param name="comparer">The comparer used to compare individual characters.</param>
+        public Trie(IEqualityComparer<char> comparer)
+        {
+            Next = new Dictionary<char, Trie>(comparer);
+        }
+
+        /// <summary>
         /// Adds the specified word to the trie.
         /// </summary>
         /// <param name="word">The word.</param>
@@ -80,7 +89,7 @@ namespace Ganss.Text
             Trie node;
 
             if (!Next.TryGetValue(c, out node))
-                Next[c] = node = new Trie { Parent = this, Char = c };
+                Next[c] = node = new Trie(Next.Comparer) { Parent = this, Char = c };
 
             if (word.Length > 1)
                 return node.Add(word.Substring(1));
