@@ -20,3 +20,11 @@ or
 ```C#
 var results = "abccab".Contains("a", "ab", "bab", "bc", "bca", "c", "caa").ToList();
 ```
+
+### Custom char comparison
+
+You can optionally supply an `IEqualityComparer<char>` to perform custom char comparisons when searching for substrings. Several implementations with comparers that mirror `StringComparer` are included.
+
+```C#
+var results = "AbCcab".Contains(CharComparer.OrdinalIgnoreCase, "a", "ab", "bC", "c").ToList();
+```
