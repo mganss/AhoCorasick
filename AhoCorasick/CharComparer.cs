@@ -143,5 +143,16 @@ namespace Ganss.Text
                 return new CultureCharComparer(CultureInfo.CurrentCulture, ignoreCase: true);
             }
         }
+
+        /// <summary>
+        /// Creates a <see cref="CharComparer"/> object that compares characters according to the rules of a specified culture.
+        /// </summary>
+        /// <param name="cultureInfo">A culture whose linguistic rules are used to perform a string comparison.</param>
+        /// <param name="ignoreCase">true to specify that comparison operations be case-insensitive; false to specify that comparison operations be case-sensitive.</param>
+        /// <returns>A new <see cref="CharComparer"/> object that performs character comparisons according to the comparison rules used by the <paramref name="cultureInfo"/> parameter and the case rule specified by the <paramref name="ignoreCase"/> parameter.</returns>
+        public static CharComparer Create(CultureInfo cultureInfo, bool ignoreCase)
+        {
+            return new CultureCharComparer(cultureInfo, ignoreCase);
+        }
     }
 }
