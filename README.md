@@ -107,7 +107,7 @@ There are also functions that return only matches occuring at word boundaries: `
 
 ### Forcing parallelism
 
-Although these kinds of queries lend themselves very well for parallel execution, SQL Server tends to overestimate the cost of parallel queries and builds non-parallel plans most of the time where user defined functions are involved. You can force a parallel plan by using a trace flag (more about this [here](http://www.regular-expressions.info/wordboundaries.html)):
+Although these kinds of queries lend themselves very well to parallel execution, SQL Server tends to overestimate the cost of parallel queries and builds non-parallel plans most of the time where user defined functions are involved. You can force a parallel plan by using a trace flag (more about this [here](http://www.regular-expressions.info/wordboundaries.html)):
 
 ```SQL
 declare @ac nvarchar(32);
