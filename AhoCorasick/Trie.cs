@@ -24,14 +24,6 @@ namespace Ganss.Text
         public bool IsWord { get; set; }
 
         /// <summary>
-        /// Gets or sets the character this node represents.
-        /// </summary>
-        /// <value>
-        /// The character this node represents.
-        /// </value>
-        public char Char { get; set; }
-
-        /// <summary>
         /// Gets or sets the failure node.
         /// </summary>
         /// <value>
@@ -53,19 +45,14 @@ namespace Ganss.Text
         /// <value>
         /// The word prefix.
         /// </value>
-        public string Word
-        {
-            get
-            {
-                return Parent == null ? "" : (Parent.Word + Char);
-            }
-        }
+        public string Word { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trie"/> class.
         /// </summary>
         public Trie()
         {
+            Word = "";
             Next = new Dictionary<char, Trie>();
         }
 
@@ -75,6 +62,7 @@ namespace Ganss.Text
         /// <param name="comparer">The comparer used to compare individual characters.</param>
         public Trie(IEqualityComparer<char> comparer)
         {
+            Word = "";
             Next = new Dictionary<char, Trie>(comparer);
         }
 
@@ -89,7 +77,7 @@ namespace Ganss.Text
             Trie node;
 
             if (!Next.TryGetValue(c, out node))
-                Next[c] = node = new Trie(Next.Comparer) { Parent = this, Char = c };
+                Next[c] = node = new Trie(Next.Comparer) { Parent = this, Word = Word + c };
 
             if (word.Length > 1)
                 return node.Add(word.Substring(1));
