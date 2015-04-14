@@ -118,3 +118,29 @@ OPTION (RECOMPILE, QUERYTRACEON 8649)
 ```
 
 Parallel operators are identified by a yellow badge with two arrows in the query plan.
+
+### Performance
+
+Here's a benchmark searching for ~5000 words (average length 7) in ~250,000 texts (average length ~900):
+
+|SQL|AhoCorasick|
+|---|-----------|
+|560s|7s|
+
+The SQL query used was this:
+
+```SQL
+select * from Posts P
+where exists (select * from Words W where CHARINDEX(W.Word, P.Text) > 0)
+```
+
+#### But I can simply use full-text search
+
+No. The [CONTAINS](https://msdn.microsoft.com/en-us/library/ms187787.aspx) predicate can only search for a single literal or variable at a time. You can't use it in a join or subquery to search for a column value of a table in the query, i.e. this won't work:
+
+```SQL
+select * from Posts P
+where exists (select * from Words W where CONTAINS(P.Text, W.Word))
+```
+
+If you know of a way to make this work using FTS (perhaps using a cursor?) let me know.
