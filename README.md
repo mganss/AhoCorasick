@@ -64,7 +64,7 @@ The last parameter in the function indicates the culture to use since there is n
 |c|Current Culture|
 |n|Invariant Culture|
 |o or Empty|Ordinal|
-|Culture name, e-g. "de-de"|Specific [.NET Culture](https://msdn.microsoft.com/en-us/library/system.globalization.cultureinfo.name.aspx)|
+|Culture name, e.g. "de-de"|Specific [.NET Culture](https://msdn.microsoft.com/en-us/library/system.globalization.cultureinfo.name.aspx)|
 
 The culture identifier can be suffixed by `:i` indicating case-insensitive matching.
 
