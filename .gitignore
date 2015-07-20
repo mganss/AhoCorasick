@@ -148,3 +148,5 @@ $RECYCLE.BIN/
 .DS_Store
 
 *.nupkg
+TestResult.xml
+coverage.xml
