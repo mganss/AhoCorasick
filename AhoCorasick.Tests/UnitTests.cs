@@ -3,6 +3,7 @@ using System.Linq;
 using Ganss.Text;
 using System.Collections.Generic;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace Ganss.Text.Tests
 {
@@ -68,6 +69,12 @@ namespace Ganss.Text.Tests
         {
             var m = "abc".Contains("abd", "bc", "ab").ToList();
             CollectionAssert.AreEqual(new WordMatchList { { 0, "ab" }, { 1, "bc" } }, m);
+            m = "abc".Contains(new List<string> { "abd", "bc", "ab" }).ToList();
+            CollectionAssert.AreEqual(new WordMatchList { { 0, "ab" }, { 1, "bc" } }, m);
+            m = "ABC".Contains(CharComparer.OrdinalIgnoreCase, "abd", "bc", "ab").ToList();
+            CollectionAssert.AreEqual(new WordMatchList { { 0, "ab" }, { 1, "bc" } }, m);
+            m = "ABC".Contains(CharComparer.OrdinalIgnoreCase, new List<string> { "abd", "bc", "ab" }).ToList();
+            CollectionAssert.AreEqual(new WordMatchList { { 0, "ab" }, { 1, "bc" } }, m);
         }
 
         [Test]
@@ -85,6 +92,30 @@ namespace Ganss.Text.Tests
             var ac = new AhoCorasick(CharComparer.OrdinalIgnoreCase, "a", "ab", "bab", "bC", "bca", "c", "caa");
             var m = ac.Search("abCcab").ToList();
             var expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bC" }, { 2, "c" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
+            CollectionAssert.AreEqual(expected, m);
+        }
+
+        [Test]
+        public void OverloadsTest()
+        {
+            var ac = new AhoCorasick(new List<string> { "a" });
+            CollectionAssert.AreEqual(new WordMatchList { { 0, "a" } }, ac.Search("a").ToList());
+            Assert.AreEqual(0, ac.Search("b").Count());
+
+            ac = new AhoCorasick(CharComparer.OrdinalIgnoreCase, new List<string> { "a", "ab", "bab", "bC", "bca", "c", "caa" });
+            var m = ac.Search("abCcab").ToList();
+            var expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bC" }, { 2, "c" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
+            CollectionAssert.AreEqual(expected, m);
+
+            ac = new AhoCorasick();
+            ac.Add("a");
+            ac.BuildFail();
+            CollectionAssert.AreEqual(new WordMatchList { { 0, "a" } }, ac.Search("a").ToList());
+            Assert.AreEqual(0, ac.Search("b").Count());
+
+            ac = new AhoCorasick(CharComparer.Create(CultureInfo.InvariantCulture, true), "a", "ab", "bab", "bc", "bca", "c", "caa");
+            m = ac.Search("abccab").ToList();
+            expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bc" }, { 2, "c" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
             CollectionAssert.AreEqual(expected, m);
         }
     }
