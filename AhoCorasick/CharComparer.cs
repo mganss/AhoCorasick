@@ -29,21 +29,23 @@ namespace Ganss.Text
 
     class CultureCharComparer: CharComparer
     {
-        private StringComparer _stringComparer;
+        private CompareInfo _compareInfo;
+        private bool _ignoreCase;
 
         public CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false)
         {
-            _stringComparer = StringComparer.Create(cultureInfo, ignoreCase);
+            _compareInfo = cultureInfo.CompareInfo;
+            _ignoreCase = ignoreCase;
         }
 
         public override bool Equals(char x, char y)
         {
-            return _stringComparer.Equals(x.ToString(), y.ToString());
+            return _compareInfo.Compare(x.ToString(), y.ToString(), _ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
         }
 
         public override int GetHashCode(char obj)
         {
-            return _stringComparer.GetHashCode(obj.ToString());
+            return obj.GetHashCode();
         }
     }
 
