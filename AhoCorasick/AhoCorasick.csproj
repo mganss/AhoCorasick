@@ -15,5 +15,6 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>git://github.com/mganss/AhoCorasick</RepositoryUrl>
     <RootNamespace>Ganss.Text</RootNamespace>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 </Project>
