@@ -1,16 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AhoCorasick", "AhoCorasick\AhoCorasick.csproj", "{A1F19E27-06C8-4DB1-94CE-24B4F10330DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AhoCorasick", "AhoCorasick\AhoCorasick.csproj", "{A1F19E27-06C8-4DB1-94CE-24B4F10330DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AhoCorasick.Tests", "AhoCorasick.Tests\AhoCorasick.Tests.csproj", "{860F4149-D7F3-495A-99BE-8AC3FBAE4176}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1E03024A-B2E8-4B07-A222-98B7B9724077}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AhoCorasick.Tests", "AhoCorasick.Tests\AhoCorasick.Tests.csproj", "{860F4149-D7F3-495A-99BE-8AC3FBAE4176}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12FCD39C-9278-4D4D-8438-9A0FCDCA85F3}
 	EndGlobalSection
 EndGlobal

@@ -54,7 +54,7 @@ namespace Ganss.Text.Tests
         [Test]
         public void CultureTest()
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
+            CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
             var c = CharComparer.CurrentCulture;
             Assert.IsTrue(c.Equals('i', 'i'));
             Assert.IsFalse(c.Equals(SmallDotlessI, 'i'));

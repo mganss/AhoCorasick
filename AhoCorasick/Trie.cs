@@ -74,9 +74,8 @@ namespace Ganss.Text
         public virtual Trie Add(string word)
         {
             var c = word[0];
-            Trie node;
 
-            if (!Next.TryGetValue(c, out node))
+            if (!Next.TryGetValue(c, out Trie node))
                 Next[c] = node = new Trie(Next.Comparer) { Parent = this, Word = Word + c };
 
             if (word.Length > 1)
