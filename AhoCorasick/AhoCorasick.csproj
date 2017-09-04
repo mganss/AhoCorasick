@@ -6,7 +6,7 @@
     <Copyright>Copyright 2013-2017 Michael Ganss</Copyright>
     <VersionPrefix>1.0.0-VERSION</VersionPrefix>
     <Authors>Michael Ganss</Authors>
-    <TargetFrameworks>net40;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>net40;netstandard1.3</TargetFrameworks>
     <AssemblyName>AhoCorasick</AssemblyName>
     <PackageId>AhoCorasick</PackageId>
     <PackageTags>aho-corasick;aho;corasick;string;search;match;substring</PackageTags>

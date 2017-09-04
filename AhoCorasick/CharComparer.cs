@@ -27,6 +27,27 @@ namespace Ganss.Text
         }
     }
 
+#if NET40
+    class CultureCharComparer : CharComparer
+    {
+        private StringComparer _stringComparer;
+
+        public CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false)
+        {
+            _stringComparer = StringComparer.Create(cultureInfo, ignoreCase);
+        }
+
+        public override bool Equals(char x, char y)
+        {
+            return _stringComparer.Equals(x.ToString(), y.ToString());
+        }
+
+        public override int GetHashCode(char obj)
+        {
+            return _stringComparer.GetHashCode(obj.ToString());
+        }
+    }
+#else
     class CultureCharComparer: CharComparer
     {
         private CompareInfo _compareInfo;
@@ -45,9 +66,10 @@ namespace Ganss.Text
 
         public override int GetHashCode(char obj)
         {
-            return obj.GetHashCode();
+            return _compareInfo.GetHashCode(obj.ToString(), _ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
         }
     }
+#endif
 
     /// <summary>
     /// Represents a char comparison operation that uses specific case and culture-based or ordinal comparison rules.

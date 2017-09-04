@@ -151,3 +151,4 @@ $RECYCLE.BIN/
 TestResult.xml
 coverage.xml
 .vs/
+/OpenCover
