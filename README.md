@@ -4,7 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/b8lxercfn9spio95/branch/master?svg=true)](https://ci.appveyor.com/project/mganss/ahocorasick/branch/master)
 [![Coverage Status](https://coveralls.io/repos/mganss/AhoCorasick/badge.svg?branch=master&service=github)](https://coveralls.io/github/mganss/AhoCorasick?branch=master)
 
-This is an implementation of the [Aho-Corasick](https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_string_matching_algorithm) string matching algorithm for .NET (PCL) and SQL Server (SQL CLR). Mostly ported from [xudejian/aho-corasick](https://github.com/xudejian/aho-corasick) in CoffeeScript.
+This is an implementation of the [Aho-Corasick](https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_string_matching_algorithm) string matching algorithm for .NET (netstandard1.3 and net40) and SQL Server (SQL CLR). Mostly ported from [xudejian/aho-corasick](https://github.com/xudejian/aho-corasick) in CoffeeScript.
 
 ## Usage
 
