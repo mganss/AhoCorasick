@@ -8,7 +8,7 @@ namespace Ganss.Text
 {
     class OrdinalCharComparer : CharComparer
     {
-        private bool _ignoreCase;
+        private readonly bool _ignoreCase;
 
         public OrdinalCharComparer(bool ignoreCase = false)
         {
@@ -30,7 +30,7 @@ namespace Ganss.Text
 #if NET40
     class CultureCharComparer : CharComparer
     {
-        private StringComparer _stringComparer;
+        private readonly StringComparer _stringComparer;
 
         public CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false)
         {
@@ -50,8 +50,8 @@ namespace Ganss.Text
 #else
     class CultureCharComparer: CharComparer
     {
-        private CompareInfo _compareInfo;
-        private bool _ignoreCase;
+        private readonly CompareInfo _compareInfo;
+        private readonly bool _ignoreCase;
 
         public CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false)
         {
