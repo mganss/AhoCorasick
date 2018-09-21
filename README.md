@@ -72,7 +72,7 @@ The culture identifier can be suffixed by `:i` indicating case-insensitive match
 
 ### Static objects
 
-The function in the example above has the problem that the trie is rebuilt for each query even though the input always stays the same. To overcome this problem, there a number of functions to manage the creation and destruction of static objects whose handles can be saved in SQL variables. Example:
+The function in the example above has the problem that the trie is rebuilt for each query even though the input always stays the same. To overcome this problem, there are a number of functions to manage the creation and destruction of static objects whose handles can be saved in SQL variables. Example:
 
 ```SQL
 declare @ac nvarchar(32);
