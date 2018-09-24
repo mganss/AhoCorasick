@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net46;netcoreapp1.0</TargetFrameworks>
     <RootNamespace>Ganss.Text.Tests</RootNamespace>
+    <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AhoCorasick\AhoCorasick.csproj" />
@@ -11,5 +12,4 @@
     <PackageReference Include="NUnit" Version="3.8.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
   </ItemGroup>
-  <ItemGroup />
 </Project>

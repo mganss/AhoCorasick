@@ -1,6 +1,9 @@
 version: 2.0.{build}
 skip_tags: true
 image: Visual Studio 2017
+environment:
+  sonar_token:
+    secure: W7pHKhuTW6Lh8WlXJNTOIaOzeuxLi+H6Nqmnm4pr28jM6jyIpOZ+1r10lIQi0eCA
 build_script:
   - ps: (Get-Content AhoCorasick\AhoCorasick.csproj).Replace("1.0.0-VERSION", $env:APPVEYOR_BUILD_VERSION) | Set-Content AhoCorasick\AhoCorasick.csproj
   - dotnet restore
@@ -8,8 +11,18 @@ build_script:
   - dotnet pack --include-symbols --include-source -c Release AhoCorasick
 test_script:
   - dotnet test AhoCorasick.Tests\AhoCorasick.Tests.csproj
+  - ps: |
+      if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin /k:"mganss_AhoCorasick" /v:$env:APPVEYOR_BUILD_VERSION /d:sonar.organization="mganss-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$env:sonar_token" /d:sonar.cs.opencover.reportsPaths="$($env:APPVEYOR_BUILD_FOLDER)\coverage.xml" /d:sonar.coverage.exclusions="**/Program.cs"
+          dotnet build
+      }
   - nuget.exe install OpenCover -ExcludeVersion
   - OpenCover\tools\OpenCover.Console.exe -register:user -filter:"+[*]*" -target:"C:\Program Files\dotnet\dotnet.exe" "-targetargs:test AhoCorasick.Tests\AhoCorasick.Tests.csproj" -returntargetcode -hideskipped:All -output:coverage.xml -oldStyle
+  - ps: |
+      if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {
+          dotnet sonarscanner end /d:sonar.login="$env:sonar_token"
+      }
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
   - codecov -f "coverage.xml"
