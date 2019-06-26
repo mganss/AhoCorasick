@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net46;netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>net46;netcoreapp2.2</TargetFrameworks>
     <RootNamespace>Ganss.Text.Tests</RootNamespace>
     <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>

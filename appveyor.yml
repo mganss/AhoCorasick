@@ -5,7 +5,6 @@ environment:
   sonar_token:
     secure: W7pHKhuTW6Lh8WlXJNTOIaOzeuxLi+H6Nqmnm4pr28jM6jyIpOZ+1r10lIQi0eCA
 build_script:
-  - ps: (Get-Content AhoCorasick\AhoCorasick.csproj).Replace("1.0.0-VERSION", $env:APPVEYOR_BUILD_VERSION) | Set-Content AhoCorasick\AhoCorasick.csproj
   - dotnet restore
   - dotnet build -c Release
   - dotnet pack --include-symbols --include-source -c Release AhoCorasick
@@ -14,7 +13,7 @@ test_script:
   - ps: |
       if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"mganss_AhoCorasick" /v:$env:APPVEYOR_BUILD_VERSION /d:sonar.organization="mganss-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$env:sonar_token" /d:sonar.cs.opencover.reportsPaths="$($env:APPVEYOR_BUILD_FOLDER)\coverage.xml" /d:sonar.coverage.exclusions="**/Program.cs"
+          dotnet sonarscanner begin /k:"mganss_AhoCorasick" /v:$env:APPVEYOR_BUILD_VERSION /o:"mganss-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$env:sonar_token" /d:sonar.cs.opencover.reportsPaths="$($env:APPVEYOR_BUILD_FOLDER)\coverage.xml" /d:sonar.coverage.exclusions="**/Program.cs"
           dotnet build
       }
   - nuget.exe install OpenCover -ExcludeVersion
