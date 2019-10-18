@@ -138,21 +138,6 @@ namespace Ganss.Text
                 BuildFail(subNode);
         }
 
-        IEnumerable<WordMatch> Match(Trie node, int pos)
-        {
-            while (node != null)
-            {
-                if (node.IsWord)
-                {
-                    var word = node.Word;
-                    var offset = pos - word.Length;
-                    yield return new WordMatch { Index = offset, Word = word };
-                }
-
-                node = node.Fail;
-            }
-        }
-
         /// <summary>
         /// Searches for words in the specified text.
         /// </summary>
@@ -174,8 +159,21 @@ namespace Ganss.Text
                 if (current == null) current = Trie;
 
                 if (current.Next.TryGetValue(c, out current))
-                    foreach (var match in Match(current, i + 1))
-                        yield return match;
+                {
+                    var node = current;
+
+                    while (node != null)
+                    {
+                        if (node.IsWord)
+                        {
+                            var word = node.Word;
+                            var offset = i + 1 - word.Length;
+                            yield return new WordMatch { Index = offset, Word = word };
+                        }
+
+                        node = node.Fail;
+                    }
+                }
             }
         }
     }
