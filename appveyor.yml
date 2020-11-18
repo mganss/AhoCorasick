@@ -16,18 +16,16 @@ test_script:
   - ps: |
       if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"mganss_AhoCorasick" /v:$env:APPVEYOR_BUILD_VERSION /o:"mganss-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$env:sonar_token" /d:sonar.cs.opencover.reportsPaths="$($env:APPVEYOR_BUILD_FOLDER)\coverage.xml" /d:sonar.coverage.exclusions="**/Program.cs"
+          dotnet sonarscanner begin /k:"mganss_AhoCorasick" /v:$env:APPVEYOR_BUILD_VERSION /o:"mganss-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$env:sonar_token" /d:sonar.cs.opencover.reportsPaths="$($env:APPVEYOR_BUILD_FOLDER)\coverage.netcoreapp3.1.xml" /d:sonar.coverage.exclusions="**/Program.cs"
           dotnet build
       }
-  - nuget.exe install OpenCover -ExcludeVersion
-  - OpenCover\tools\OpenCover.Console.exe -register:user -filter:"+[*]*" -target:"C:\Program Files\dotnet\dotnet.exe" "-targetargs:test AhoCorasick.Tests\AhoCorasick.Tests.csproj" -returntargetcode -hideskipped:All -output:coverage.xml -oldStyle
+  - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="..\coverage.xml" AhoCorasick.Tests\AhoCorasick.Tests.csproj /p:Include="[AhoCorasick]*"
   - ps: |
       if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {
           dotnet sonarscanner end /d:sonar.login="$env:sonar_token"
       }
-  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
-  - codecov -f "coverage.xml"
+  - codecov -f "coverage.netcoreapp3.1.xml"
 artifacts:
   - path: 'AhoCorasick\**\*.nupkg'
   - path: '**\*.snupkg'
