@@ -128,7 +128,7 @@ namespace Ganss.Text
         /// <param name="node">The start node.</param>
         public void BuildFail(Trie node = null)
         {
-            node = node ?? Trie;
+            node ??= Trie;
 
             var word = node.Word;
             for (int i = 1; i < word.Length && node.Fail == null; i++)
