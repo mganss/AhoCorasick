@@ -48,13 +48,6 @@ namespace Ganss.Text.Tests
             Assert.IsFalse(c.Equals(SmallDotlessI, 'i'));
             Assert.IsFalse(c.Equals(SmallDotlessI, 'I'));
             Assert.IsTrue(c.Equals('ß', CapitalSharpS));
-
-            var rTest = c.Equals(LatinSmallCapitalR, LatinLetterYR);
-#if NETFRAMEWORK
-            Assert.IsFalse(rTest);
-#else
-            Assert.IsTrue(rTest);
-#endif
         }
 
         [Test]
@@ -73,13 +66,6 @@ namespace Ganss.Text.Tests
             Assert.IsTrue(c.Equals(SmallDotlessI, 'I'));
             Assert.IsTrue(c.Equals('i', CapitalIWithDot));
             Assert.IsTrue(c.Equals('ß', CapitalSharpS));
-
-            var rTest = c.Equals(LatinSmallCapitalR, LatinLetterYR);
-#if NETFRAMEWORK
-            Assert.IsFalse(rTest);
-#else
-            Assert.IsTrue(rTest);
-#endif
 
             Assert.AreEqual(c.GetHashCode('i'), c.GetHashCode(CapitalIWithDot));
             Assert.AreEqual(c.GetHashCode(SmallDotlessI), c.GetHashCode('I'));
