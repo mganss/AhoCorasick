@@ -18,7 +18,6 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>git://github.com/mganss/AhoCorasick</RepositoryUrl>
     <RootNamespace>Ganss.Text</RootNamespace>
-    <DebugType>full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\AhoCorasick.xml</DocumentationFile>
 	<SignAssembly>true</SignAssembly>
