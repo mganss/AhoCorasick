@@ -156,7 +156,7 @@ namespace Ganss.Text
                 while (current != null && !current.Next.ContainsKey(c))
                     current = current.Fail;
 
-                if (current == null) current = Trie;
+                current ??= Trie;
 
                 if (current.Next.TryGetValue(c, out current))
                 {
