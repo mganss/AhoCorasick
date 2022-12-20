@@ -17,7 +17,7 @@ test_script:
           dotnet sonarscanner begin /k:"mganss_AhoCorasick" /v:$env:APPVEYOR_BUILD_VERSION /o:"mganss-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$env:sonar_token" /d:sonar.cs.opencover.reportsPaths="$($env:APPVEYOR_BUILD_FOLDER)\coverage.xml" /d:sonar.coverage.exclusions="**/Program.cs"
           dotnet build
       }
-  - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="..\..\coverage.xml" AhoCorasick.Tests\AhoCorasick.Tests.csproj /p:Include="[AhoCorasick]*" -f net6.0
+  - dotnet test /p:CollectCoverage=true AhoCorasick.Tests\AhoCorasick.Tests.csproj /p:Include="[AhoCorasick]*" -f net6.0
   - ps: cp coverage.*.xml ./coverage.xml
   - ps: |
       if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {

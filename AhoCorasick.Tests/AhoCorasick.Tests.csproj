@@ -3,6 +3,9 @@
     <TargetFrameworks>net461;net6.0</TargetFrameworks>
     <RootNamespace>Ganss.Text.Tests</RootNamespace>
     <SonarQubeExclude>true</SonarQubeExclude>
+	<CoverletOutputFormat>opencover</CoverletOutputFormat>
+	<CoverletOutput>../coverage.xml</CoverletOutput>
+	<Include>[AhoCorasick]*</Include>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AhoCorasick\AhoCorasick.csproj" />
