@@ -15,6 +15,7 @@
     <PackageTags>aho-corasick;aho;corasick;string;search;match;substring</PackageTags>
     <PackageProjectUrl>https://github.com/mganss/AhoCorasick</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/mganss/AhoCorasick/blob/master/LICENSE</PackageLicenseUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>git://github.com/mganss/AhoCorasick</RepositoryUrl>
     <RootNamespace>Ganss.Text</RootNamespace>
@@ -31,5 +32,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+  <ItemGroup>
+  	<None Include="../README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
