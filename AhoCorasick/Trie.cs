@@ -91,14 +91,16 @@ namespace Ganss.Text
         /// </summary>
         /// <param name="word">The suffix.</param>
         /// <returns>The failure node or null.</returns>
-        public virtual Trie ExploreFailLink(string word)
+        public virtual Trie ExploreFailLink(string word, int startIndex, int endIndex)
         {
             var node = this;
 
-            foreach (var c in word)
+            for (int i = startIndex; i < endIndex; i++)
             {
-                node.Next.TryGetValue(c, out node);
-                if (node == null) return null;
+                if (!node.Next.TryGetValue(word[i], out node))
+                {
+                    return null;
+                }
             }
 
             return node;

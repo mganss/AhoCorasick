@@ -132,7 +132,7 @@ namespace Ganss.Text
 
             var word = node.Word;
             for (int i = 1; i < word.Length && node.Fail == null; i++)
-                node.Fail = Trie.ExploreFailLink(word.Substring(i));
+                node.Fail = Trie.ExploreFailLink(word, i, word.Length);
 
             foreach (var subNode in node.Next.Values)
                 BuildFail(subNode);
