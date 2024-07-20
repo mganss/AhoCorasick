@@ -87,18 +87,23 @@ namespace Ganss.Text
         }
 
         /// <summary>
-        /// Finds the failure node for a specified suffix.
+        /// Finds the failure node for a specified suffix within the given range of indices.
         /// </summary>
-        /// <param name="word">The suffix.</param>
-        /// <returns>The failure node or null.</returns>
-        public virtual Trie ExploreFailLink(string word)
+        /// <param name="word">The string containing the suffix.</param>
+        /// <param name="startIndex">The start index of the suffix within the string.</param>
+        /// <param name="endIndex">The end index (exclusive) of the suffix within the string.</param>
+        /// <returns>The failure node or null if no failure node is found.</returns>
+
+        public virtual Trie ExploreFailLink(string word, int startIndex, int endIndex)
         {
             var node = this;
 
-            foreach (var c in word)
+            for (int i = startIndex; i < endIndex; i++)
             {
-                node.Next.TryGetValue(c, out node);
-                if (node == null) return null;
+                if (!node.Next.TryGetValue(word[i], out node))
+                {
+                    return null;
+                }
             }
 
             return node;
