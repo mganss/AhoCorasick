@@ -53,7 +53,7 @@ namespace Ganss.Text
         public Trie()
         {
             Word = "";
-            Next = new Dictionary<char, Trie>();
+            Next = [];
         }
 
         /// <summary>

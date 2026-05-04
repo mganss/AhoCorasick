@@ -21,33 +21,45 @@ namespace Ganss.Text.Tests
         public void OrdinalTest()
         {
             var c = CharComparer.Ordinal;
-            Assert.That(c.Equals('i', 'i'), Is.True);
-            Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
-            Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
-            Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.False);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(c.Equals('i', 'i'), Is.True);
+                Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
+                Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
+                Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.False);
+            }
 
             c = CharComparer.OrdinalIgnoreCase;
-            Assert.That(c.Equals('i', 'I'), Is.True);
-            Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
-            Assert.That(c.Equals(SmallDotlessI, 'I'), Is.False);
-            Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
-            Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.True);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(c.Equals('i', 'I'), Is.True);
+                Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
+                Assert.That(c.Equals(SmallDotlessI, 'I'), Is.False);
+                Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
+                Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.True);
+            }
         }
 
         [Test]
         public void InvariantTest()
         {
             var c = CharComparer.InvariantCulture;
-            Assert.That(c.Equals('i', 'i'), Is.True);
-            Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
-            Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
-            Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.False);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(c.Equals('i', 'i'), Is.True);
+                Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
+                Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
+                Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.False);
+            }
 
             c = CharComparer.InvariantCultureIgnoreCase;
-            Assert.That(c.Equals('i', 'I'), Is.True);
-            Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
-            Assert.That(c.Equals(SmallDotlessI, 'I'), Is.False);
-            Assert.That(c.Equals('ß', CapitalSharpS), Is.True);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(c.Equals('i', 'I'), Is.True);
+                Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
+                Assert.That(c.Equals(SmallDotlessI, 'I'), Is.False);
+                Assert.That(c.Equals('ß', CapitalSharpS), Is.True);
+            }
         }
 
         [Test]
@@ -55,20 +67,26 @@ namespace Ganss.Text.Tests
         {
             CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
             var c = CharComparer.CurrentCulture;
-            Assert.That(c.Equals('i', 'i'), Is.True);
-            Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
-            Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
-            Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.False);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(c.Equals('i', 'i'), Is.True);
+                Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
+                Assert.That(c.Equals('ß', CapitalSharpS), Is.False);
+                Assert.That(c.Equals(LatinSmallCapitalR, LatinLetterYR), Is.False);
+            }
 
             c = CharComparer.CurrentCultureIgnoreCase;
-            Assert.That(c.Equals('i', 'I'), Is.False);
-            Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
-            Assert.That(c.Equals(SmallDotlessI, 'I'), Is.True);
-            Assert.That(c.Equals('i', CapitalIWithDot), Is.True);
-            Assert.That(c.Equals('ß', CapitalSharpS), Is.True);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(c.Equals('i', 'I'), Is.False);
+                Assert.That(c.Equals(SmallDotlessI, 'i'), Is.False);
+                Assert.That(c.Equals(SmallDotlessI, 'I'), Is.True);
+                Assert.That(c.Equals('i', CapitalIWithDot), Is.True);
+                Assert.That(c.Equals('ß', CapitalSharpS), Is.True);
 
-            Assert.That(c.GetHashCode('i'), Is.EqualTo(c.GetHashCode(CapitalIWithDot)));
-            Assert.That(c.GetHashCode(SmallDotlessI), Is.EqualTo(c.GetHashCode('I')));
+                Assert.That(c.GetHashCode('i'), Is.EqualTo(c.GetHashCode(CapitalIWithDot)));
+                Assert.That(c.GetHashCode(SmallDotlessI), Is.EqualTo(c.GetHashCode('I')));
+            }
         }
     }
 }

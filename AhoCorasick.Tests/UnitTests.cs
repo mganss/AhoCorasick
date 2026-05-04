@@ -31,8 +31,11 @@ namespace Ganss.Text.Tests
         public void SimpleTest()
         {
             var ac = new AhoCorasick("a");
-            Assert.That(ac.Search("a").ToList(), Is.EquivalentTo(new WordMatchList { { 0, "a" } }));
-            Assert.That(ac.Search("b"), Is.Empty);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(ac.Search("a").ToList(), Is.EquivalentTo(new WordMatchList { { 0, "a" } }));
+                Assert.That(ac.Search("b"), Is.Empty);
+            }
         }
 
         [Test]
@@ -41,7 +44,7 @@ namespace Ganss.Text.Tests
             var ac = new AhoCorasick("a");
             var m = ac.Search(null).ToList();
             Assert.That(m, Is.Empty);
-            m = ac.Search("").ToList();
+            m = [.. ac.Search("")];
             Assert.That(m, Is.Empty);
         }
 
@@ -69,11 +72,11 @@ namespace Ganss.Text.Tests
         {
             var m = "abc".Contains("abd", "bc", "ab").ToList();
             Assert.That(m, Is.EquivalentTo(new WordMatchList { { 0, "ab" }, { 1, "bc" } }));
-            m = "abc".Contains(new List<string> { "abd", "bc", "ab" }).ToList();
+            m = [.."abc".Contains(new List<string> { "abd", "bc", "ab" })];
             Assert.That(m, Is.EquivalentTo(new WordMatchList { { 0, "ab" }, { 1, "bc" } }));
-            m = "ABC".Contains(CharComparer.OrdinalIgnoreCase, "abd", "bc", "ab").ToList();
+            m = [.."ABC".Contains(CharComparer.OrdinalIgnoreCase, "abd", "bc", "ab")];
             Assert.That(m, Is.EquivalentTo(new WordMatchList { { 0, "ab" }, { 1, "bc" } }));
-            m = "ABC".Contains(CharComparer.OrdinalIgnoreCase, new List<string> { "abd", "bc", "ab" }).ToList();
+            m = [.."ABC".Contains(CharComparer.OrdinalIgnoreCase, new List<string> { "abd", "bc", "ab" })];
             Assert.That(m, Is.EquivalentTo(new WordMatchList { { 0, "ab" }, { 1, "bc" } }));
         }
 
@@ -99,8 +102,11 @@ namespace Ganss.Text.Tests
         public void OverloadsTest()
         {
             var ac = new AhoCorasick(new List<string> { "a" });
-            Assert.That(ac.Search("a").ToList(), Is.EquivalentTo(new WordMatchList { { 0, "a" } }));
-            Assert.That(ac.Search("b"), Is.Empty);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(ac.Search("a").ToList(), Is.EquivalentTo(new WordMatchList { { 0, "a" } }));
+                Assert.That(ac.Search("b"), Is.Empty);
+            }
 
             ac = new AhoCorasick(CharComparer.OrdinalIgnoreCase, new List<string> { "a", "ab", "bab", "bC", "bca", "c", "caa" });
             var m = ac.Search("abCcab").ToList();
@@ -110,11 +116,14 @@ namespace Ganss.Text.Tests
             ac = new AhoCorasick();
             ac.Add("a");
             ac.BuildFail();
-            Assert.That(ac.Search("a").ToList(), Is.EquivalentTo(new WordMatchList { { 0, "a" } }));
-            Assert.That(ac.Search("b"), Is.Empty);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(ac.Search("a").ToList(), Is.EquivalentTo(new WordMatchList { { 0, "a" } }));
+                Assert.That(ac.Search("b"), Is.Empty);
+            }
 
             ac = new AhoCorasick(CharComparer.Create(CultureInfo.InvariantCulture, true), "a", "ab", "bab", "bc", "bca", "c", "caa");
-            m = ac.Search("abccab").ToList();
+            m = [.. ac.Search("abccab")];
             expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bc" }, { 2, "c" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
             Assert.That(m, Is.EquivalentTo(expected));
         }

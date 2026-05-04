@@ -6,36 +6,24 @@ using System.Text;
 
 namespace Ganss.Text
 {
-    class OrdinalCharComparer : CharComparer
+    class OrdinalCharComparer(bool ignoreCase = false) : CharComparer
     {
-        private readonly bool _ignoreCase;
-
-        public OrdinalCharComparer(bool ignoreCase = false)
-        {
-            _ignoreCase = ignoreCase;
-        }
-
         public override bool Equals(char x, char y)
         {
-            return _ignoreCase ? ((uint)char.ToUpperInvariant(x)).Equals(((uint)char.ToUpperInvariant(y)))
+            return ignoreCase ? ((uint)char.ToUpperInvariant(x)).Equals(((uint)char.ToUpperInvariant(y)))
                 : ((uint)x).Equals((uint)y);
         }
 
         public override int GetHashCode(char obj)
         {
-            return _ignoreCase ? (int)char.ToUpperInvariant(obj) : (int)obj;
+            return ignoreCase ? (int)char.ToUpperInvariant(obj) : (int)obj;
         }
     }
 
 #if NET40
-    class CultureCharComparer : CharComparer
+    class CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false) : CharComparer
     {
-        private readonly StringComparer _stringComparer;
-
-        public CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false)
-        {
-            _stringComparer = StringComparer.Create(cultureInfo, ignoreCase);
-        }
+        private readonly StringComparer _stringComparer = StringComparer.Create(cultureInfo, ignoreCase);
 
         public override bool Equals(char x, char y)
         {
@@ -48,25 +36,18 @@ namespace Ganss.Text
         }
     }
 #else
-    class CultureCharComparer: CharComparer
+    class CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false) : CharComparer
     {
-        private readonly CompareInfo _compareInfo;
-        private readonly bool _ignoreCase;
-
-        public CultureCharComparer(CultureInfo cultureInfo, bool ignoreCase = false)
-        {
-            _compareInfo = cultureInfo.CompareInfo;
-            _ignoreCase = ignoreCase;
-        }
+        private readonly CompareInfo _compareInfo = cultureInfo.CompareInfo;
 
         public override bool Equals(char x, char y)
         {
-            return _compareInfo.Compare(x.ToString(), y.ToString(), _ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
+            return _compareInfo.Compare(x.ToString(), y.ToString(), ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
         }
 
         public override int GetHashCode(char obj)
         {
-            return _compareInfo.GetHashCode(obj.ToString(), _ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+            return _compareInfo.GetHashCode(obj.ToString(), ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
         }
     }
 #endif

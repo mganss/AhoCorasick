@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net462;net6.0</TargetFrameworks>
+    <TargetFrameworks>net462;net8.0</TargetFrameworks>
     <RootNamespace>Ganss.Text.Tests</RootNamespace>
     <SonarQubeExclude>true</SonarQubeExclude>
 	<CoverletOutputFormat>opencover</CoverletOutputFormat>
 	<CoverletOutput>../coverage.xml</CoverletOutput>
 	<Include>[AhoCorasick]*</Include>
+	<LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AhoCorasick\AhoCorasick.csproj" />
@@ -15,9 +16,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
     <PackageReference Include="NUnit" Version="4.6.0" />
-	<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+	<PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
 	<PackageReference Include="NUnit.Analyzers" Version="4.13.0">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
