@@ -73,6 +73,9 @@ jobs:
       - name: Test
         run: dotnet test /p:CollectCoverage=true AhoCorasick.Tests/AhoCorasick.Tests.csproj -f net8.0
 
+      - name: Rename coverage report
+        run: cp coverage.*.xml ./coverage.xml
+
       - name: SonarScanner end
         if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
         env:

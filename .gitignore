@@ -149,6 +149,6 @@ $RECYCLE.BIN/
 
 *.nupkg
 TestResult.xml
-coverage.xml
+coverage*.xml
 .vs/
 /OpenCover
