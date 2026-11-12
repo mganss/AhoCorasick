@@ -24,9 +24,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
-          dotnet-version: |
-            8.0.x
-            11.0.x
+          dotnet-version: 10.0.x
 
       - name: Setup Java (for SonarScanner)
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
@@ -71,7 +69,7 @@ jobs:
         run: dotnet build
 
       - name: Test
-        run: dotnet test /p:CollectCoverage=true AhoCorasick.Tests/AhoCorasick.Tests.csproj -f net8.0
+        run: dotnet test /p:CollectCoverage=true AhoCorasick.Tests/AhoCorasick.Tests.csproj -f net10.0
 
       - name: Rename coverage report
         run: cp coverage.*.xml ./coverage.xml
