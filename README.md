@@ -1,8 +1,9 @@
 # AhoCorasick
 
 [![Version](https://img.shields.io/nuget/v/AhoCorasick.svg)](https://www.nuget.org/packages/AhoCorasick)
-[![Build status](https://ci.appveyor.com/api/projects/status/b8lxercfn9spio95/branch/master?svg=true)](https://ci.appveyor.com/project/mganss/ahocorasick/branch/master)
-[![Coverage Status](https://coveralls.io/repos/mganss/AhoCorasick/badge.svg?branch=master&service=github)](https://coveralls.io/github/mganss/AhoCorasick?branch=master)
+[![Build status](https://github.com/mganss/AhoCorasick/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/mganss/AhoCorasick/actions/workflows/build.yml)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mganss_AhoCorasick&metric=coverage)](https://sonarcloud.io/dashboard?id=mganss_AhoCorasick)
+[![Sonarcloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=mganss_AhoCorasick&metric=alert_status)](https://sonarcloud.io/dashboard?id=mganss_AhoCorasick)
 [![netstandard2.0](https://img.shields.io/badge/netstandard-2.0-brightgreen.svg)](https://img.shields.io/badge/netstandard-2.0-brightgreen.svg)
 [![net40](https://img.shields.io/badge/net-40-brightgreen.svg)](https://img.shields.io/badge/net-40-brightgreen.svg)
 
