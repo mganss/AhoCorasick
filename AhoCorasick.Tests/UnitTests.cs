@@ -127,5 +127,22 @@ namespace Ganss.Text.Tests
             expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bc" }, { 2, "c" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
             Assert.That(m, Is.EquivalentTo(expected));
         }
+
+        [Test]
+        public void AddAfterBuildFailTest()
+        {
+            var ac = new AhoCorasick("aca");
+            ac.Add(new List<string> { "ca" });
+            var m = ac.Search("aca").ToList();
+            var expected = new WordMatchList { { 0, "aca" }, { 1, "ca" } };
+            Assert.That(m, Is.EquivalentTo(expected));
+
+            ac = new AhoCorasick("a", "aca");
+            ac.Add("ca");
+            ac.BuildFail();
+            m = [.. ac.Search("aca")];
+            expected = new WordMatchList { { 0, "a" }, { 0, "aca" }, { 1, "ca" }, { 2, "a" } };
+            Assert.That(m, Is.EquivalentTo(expected));
+        }
     }
 }
