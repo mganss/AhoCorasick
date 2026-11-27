@@ -13,6 +13,25 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <IsPackable>false</IsPackable>
     <SonarQubeExclude>true</SonarQubeExclude>
+    <!--
+      The generated SQL CLR script embeds this assembly, so the same sources should give the same
+      script. Deterministic is the default, but the compiler also records the paths of the source
+      files, which differ between a local checkout and the build agent, so map the repository root
+      to a fixed path. The version is pinned for the same reason. The .NET SDK is an input too: a
+      different SDK can still produce different bytes.
+    -->
+    <Deterministic>true</Deterministic>
+    <PathMap>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..'))=/_/</PathMap>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <!-- Without this the SDK asks git for the commit and puts it into both
+         AssemblyInformationalVersion and the Source Link document of the pdb, together with the
+         absolute path of the checkout, so the assembly would change with every commit and differ
+         between checkouts. This assembly is embedded in a SQL script rather than shipped for
+         debugging, so Source Link has no use here. -->
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+    <EnableSourceLink>false</EnableSourceLink>
   </PropertyGroup>
   <ItemGroup>
     <!-- The same files, in the same order, as the Compile items of the .sqlproj. -->

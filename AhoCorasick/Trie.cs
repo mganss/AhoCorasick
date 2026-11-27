@@ -80,19 +80,29 @@ namespace Ganss.Text
         /// <summary>
         /// Adds the specified word to the trie.
         /// </summary>
+        /// <remarks>Walks the word instead of calling itself once per character, so that the length of
+        /// a word is not limited by the stack.</remarks>
         /// <param name="word">The word.</param>
-        /// <returns></returns>
+        /// <returns>The node of the added word.</returns>
         public virtual Trie Add(string word)
         {
-            var c = word[0];
+            // Indexed before the loop so that null and the empty string still throw what they threw
+            // when this method recursed.
+            _ = word[0];
 
-            if (!Next.TryGetValue(c, out Trie node))
-                Next[c] = node = new Trie(Next.Comparer) { Parent = this, Word = Word + c };
+            var node = this;
 
-            if (word.Length > 1)
-                return node.Add(word.Substring(1));
-            else
-                node.IsWord = true;
+            for (int i = 0; i < word.Length; i++)
+            {
+                var c = word[i];
+
+                if (!node.Next.TryGetValue(c, out Trie next))
+                    node.Next[c] = next = new Trie(node.Next.Comparer) { Parent = node, Word = node.Word + c };
+
+                node = next;
+            }
+
+            node.IsWord = true;
 
             return node;
         }

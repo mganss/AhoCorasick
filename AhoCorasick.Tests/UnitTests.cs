@@ -164,6 +164,18 @@ namespace Ganss.Text.Tests
         }
 
         [Test]
+        public void LongWordTest()
+        {
+            // Trie.Add walks the word rather than recursing, so the length of a word is not limited
+            // by the stack.
+            var longWord = new string('a', 1000) + "b";
+            var ac = new AhoCorasick(longWord, "ab");
+            var m = ac.Search(longWord).ToList();
+            var expected = new WordMatchList { { 0, longWord }, { 999, "ab" } };
+            Assert.That(m, Is.EquivalentTo(expected));
+        }
+
+        [Test]
         public void SearchOrderTest()
         {
             // Matches come out by the position they end at, longest first within a position. Not part
