@@ -164,50 +164,66 @@ namespace Ganss.Text.Tests
         }
 
         [Test]
-        public void SearchDoesNotRebuildFailNodesTest()
+        public void SearchOrderTest()
         {
-            var ac = new CountingAhoCorasick();
+            // Matches come out by the position they end at, longest first within a position. Not part
+            // of the contract, but it is what callers get, so changes to Search should not alter it.
+            var ac = new AhoCorasick("a", "ab", "bab", "bc", "bca", "c", "caa");
+            var m = ac.Search("abccab").ToList();
+            var expected = new WordMatchList { { 0, "a" }, { 0, "ab" }, { 1, "bc" }, { 2, "c" }, { 3, "c" }, { 4, "a" }, { 4, "ab" } };
+            Assert.That(m, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void NeedsBuildFailTest()
+        {
+            var ac = new AhoCorasick();
+            Assert.That(ac.NeedsBuildFail, Is.False, "nothing has been added yet");
+
+            ac.Add("aca");
+            Assert.That(ac.NeedsBuildFail, "Add(string) does not build the failure nodes");
+
+            ac.Search("aca").ToList();
+            Assert.That(ac.NeedsBuildFail, Is.False, "Search builds the failure nodes");
+
+            ac.Add("ca");
+            Assert.That(ac.NeedsBuildFail);
+
+            ac.BuildFail();
+            Assert.That(ac.NeedsBuildFail, Is.False);
+
+            // Add(IEnumerable<string>) builds them itself.
+            ac.Add(new List<string> { "c" });
+            Assert.That(ac.NeedsBuildFail, Is.False);
+
+            // The words of the constructor are added through Add(IEnumerable<string>).
+            Assert.That(new AhoCorasick("a").NeedsBuildFail, Is.False);
+        }
+
+        [Test]
+        public void BuildFailIgnoresNodeTest()
+        {
+            // The parameter cannot be honoured, a node can fail to a node in an unrelated branch.
+            var ac = new SubtreeAhoCorasick();
             ac.Add("aca");
             ac.Add("ca");
+            ac.BuildFailFromFirstChild();
 
-            Assert.That(ac.ExploreFailLinkCount, Is.Zero, "Add should not build the failure nodes");
-
-            ac.Search("aca").ToList();
-            var afterFirstSearch = ac.ExploreFailLinkCount;
-            Assert.That(afterFirstSearch, Is.Positive, "Search should build the failure nodes");
-
-            // Nothing was added, so searching again must not build them again.
-            ac.Search("aca").ToList();
-            Assert.That(ac.ExploreFailLinkCount, Is.EqualTo(afterFirstSearch));
-
-            // Adding another word makes the next search build them again.
-            ac.Add("c");
-            ac.Search("aca").ToList();
-            Assert.That(ac.ExploreFailLinkCount, Is.GreaterThan(afterFirstSearch));
+            Assert.That(ac.NeedsBuildFail, Is.False);
+            var expected = new WordMatchList { { 0, "aca" }, { 1, "ca" } };
+            Assert.That(ac.Search("aca").ToList(), Is.EquivalentTo(expected));
         }
 
-        /// <summary>
-        /// Counts how often failure links are explored. Only the root node is asked for failure links,
-        /// so counting on the root is enough.
-        /// </summary>
-        private sealed class CountingTrie : Trie
+        private sealed class SubtreeAhoCorasick : AhoCorasick
         {
-            public int ExploreFailLinkCount { get; private set; }
-
-            public override Trie ExploreFailLink(string word, int startIndex, int endIndex)
+            public void BuildFailFromFirstChild()
             {
-                ExploreFailLinkCount++;
-                return base.ExploreFailLink(word, startIndex, endIndex);
+                foreach (var child in Trie.Next.Values)
+                {
+                    BuildFail(child);
+                    return;
+                }
             }
-        }
-
-        private sealed class CountingAhoCorasick : AhoCorasick
-        {
-            private readonly CountingTrie countingTrie = new();
-
-            public CountingAhoCorasick() => Trie = countingTrie;
-
-            public int ExploreFailLinkCount => countingTrie.ExploreFailLinkCount;
         }
     }
 }

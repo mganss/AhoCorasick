@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Ganss.Text
 {
@@ -38,9 +39,13 @@ namespace Ganss.Text
         protected Trie Trie { get; set; }
 
         /// <summary>
-        /// Whether words have been added since the failure nodes were last built.
+        /// Gets a value indicating whether words have been added since the failure nodes were last built.
         /// </summary>
-        private bool needsBuildFail;
+        /// <value>
+        ///   <c>true</c> if <see cref="Search"/> has to build the failure nodes before it can search;
+        ///   otherwise, <c>false</c>.
+        /// </value>
+        public bool NeedsBuildFail { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
@@ -111,7 +116,7 @@ namespace Ganss.Text
         {
             // Set before adding, so that a word that fails to be added does not leave the
             // failure nodes marked as up to date.
-            needsBuildFail = true;
+            NeedsBuildFail = true;
             Trie.Add(word);
         }
 
@@ -121,7 +126,7 @@ namespace Ganss.Text
         /// <param name="words">The words.</param>
         public void Add(IEnumerable<string> words)
         {
-            needsBuildFail = true;
+            NeedsBuildFail = true;
 
             foreach (var word in words)
             {
@@ -136,26 +141,56 @@ namespace Ganss.Text
         /// </summary>
         /// <remarks>Can be called repeatedly. Every failure node is recomputed, so words added since
         /// the last build are taken into account.</remarks>
-        /// <param name="node">The start node. Pass <c>null</c> to build the whole trie.</param>
+        /// <param name="node">Ignored. The failure nodes are built for the whole trie, which is what
+        /// makes them correct: a node can fail to a node in an unrelated branch of the trie.</param>
         public void BuildFail(Trie node = null)
         {
-            var wholeTrie = node == null;
+            // The failure node of a node is the node of the longest proper suffix of its word that is
+            // in the trie. That suffix is a suffix of the node's parent's word extended by the node's
+            // last character, so the failure node can be found by following the failure nodes of the
+            // parent, provided those are known already. Hence breadth first, by increasing word length.
+            var queue = new Queue<Trie>();
 
-            node ??= Trie;
+            Trie.Fail = null;
+            Trie.WordFail = null;
 
-            // Words added since the last build can give a node a longer suffix match,
-            // so recompute every failure link instead of keeping the old one.
-            node.Fail = null;
+            foreach (var child in Trie.Next.Values)
+            {
+                // A one character word has no proper suffix other than the empty one, which is the
+                // root, represented by a null failure node.
+                child.Fail = null;
+                child.WordFail = null;
+                queue.Enqueue(child);
+            }
 
-            var word = node.Word;
-            for (int i = 1; i < word.Length && node.Fail == null; i++)
-                node.Fail = Trie.ExploreFailLink(word, i, word.Length);
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
 
-            foreach (var subNode in node.Next.Values)
-                BuildFail(subNode);
+                foreach (var next in current.Next)
+                {
+                    var c = next.Key;
+                    var child = next.Value;
 
-            // Only a build that started at the root leaves the whole trie searchable.
-            if (wholeTrie) needsBuildFail = false;
+                    // The longest suffix of the current word that can be extended by c.
+                    var fail = current.Fail;
+
+                    while (fail != null && !fail.Next.ContainsKey(c))
+                        fail = fail.Fail;
+
+                    child.Fail = (fail ?? Trie).Next.TryGetValue(c, out var suffix) ? suffix : null;
+
+                    // The nearest word on the failure chain, so that Search does not have to walk
+                    // the whole chain to find the words ending at a position.
+                    child.WordFail = child.Fail == null ? null
+                        : child.Fail.IsWord ? child.Fail
+                        : child.Fail.WordFail;
+
+                    queue.Enqueue(child);
+                }
+            }
+
+            NeedsBuildFail = false;
         }
 
         /// <summary>
@@ -170,7 +205,7 @@ namespace Ganss.Text
         {
             // Not an iterator method, so this happens when Search is called rather than
             // when the result is first enumerated.
-            if (needsBuildFail) BuildFail();
+            if (NeedsBuildFail) BuildFail();
 
             return SearchBuilt(text);
         }
@@ -197,18 +232,17 @@ namespace Ganss.Text
 
                 if (current.Next.TryGetValue(c, out current))
                 {
-                    var node = current;
+                    // Every word ending here is the current node, if it is a word, followed by the
+                    // words on its failure chain, which WordFail links together directly.
+                    var node = current.IsWord ? current : current.WordFail;
 
                     while (node != null)
                     {
-                        if (node.IsWord)
-                        {
-                            var word = node.Word;
-                            var offset = i + 1 - word.Length;
-                            yield return new WordMatch { Index = offset, Word = word };
-                        }
+                        var word = node.Word;
+                        var offset = i + 1 - word.Length;
+                        yield return new WordMatch { Index = offset, Word = word };
 
-                        node = node.Fail;
+                        node = node.WordFail;
                     }
                 }
             }

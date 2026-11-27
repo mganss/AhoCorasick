@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Ganss.Text
 {
@@ -30,6 +31,16 @@ namespace Ganss.Text
         /// The failure node.
         /// </value>
         public Trie Fail { get; set; }
+
+        /// <summary>
+        /// Gets or sets the nearest node on the failure chain that represents a word, if any.
+        /// </summary>
+        /// <value>
+        /// The nearest failure node that is a word.
+        /// </value>
+        /// <remarks>Lets a search enumerate the words ending at a position without walking the whole
+        /// failure chain. Internal because it is only meaningful while the failure nodes are built.</remarks>
+        internal Trie WordFail { get; set; }
 
         /// <summary>
         /// Gets or sets the parent node.
@@ -93,7 +104,10 @@ namespace Ganss.Text
         /// <param name="startIndex">The start index of the suffix within the string.</param>
         /// <param name="endIndex">The end index (exclusive) of the suffix within the string.</param>
         /// <returns>The failure node or null if no failure node is found.</returns>
-
+        /// <remarks>No longer used. <see cref="AhoCorasick.BuildFail"/> builds the failure nodes breadth
+        /// first from the failure nodes of the parents instead of exploring suffixes from the root, so
+        /// overriding this method no longer has an effect on a search.</remarks>
+        [Obsolete("Failure nodes are no longer explored from the root, so this method is no longer called. It will be removed in a future major version.")]
         public virtual Trie ExploreFailLink(string word, int startIndex, int endIndex)
         {
             var node = this;
