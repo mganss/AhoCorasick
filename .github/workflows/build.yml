@@ -92,6 +92,44 @@ jobs:
           name: packages
           path: packages/*.*nupkg
 
+  # Generates the SQL CLR install script and installs it into the LocalDB instance of the image, so
+  # that the script is built from the current sources and is known to work before it is published.
+  sqlclr:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build the SQL CLR assembly
+        run: dotnet build AhoCorasick.SqlClr.Build/AhoCorasick.SqlClr.Build.csproj -c Release -warnaserror
+
+      - name: Generate the install script
+        shell: pwsh
+        run: ./eng/New-SqlClrScript.ps1 -OutFile sqlclr/AhoCorasick.SqlClr_Create.sql
+
+      - name: Start LocalDB
+        shell: pwsh
+        run: |
+          sqllocaldb create MSSQLLocalDB -s
+          sqllocaldb start MSSQLLocalDB
+          sqllocaldb info MSSQLLocalDB
+
+      - name: Install and call the SQL CLR functions
+        shell: pwsh
+        run: ./eng/Test-SqlClrScript.ps1 -Script sqlclr/AhoCorasick.SqlClr_Create.sql
+
+      - name: Upload the install script
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sqlclr
+          path: sqlclr/*.sql
+
   verify-signature:
     needs: build
     runs-on: windows-latest
@@ -122,7 +160,7 @@ jobs:
           if ($failed) { exit 1 }
 
   release:
-    needs: [build, verify-signature]
+    needs: [build, verify-signature, sqlclr]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -135,6 +173,13 @@ jobs:
           name: packages
           path: packages
 
+      # The install script that was generated from, and tested against, exactly these packages.
+      - name: Download the SQL CLR install script
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: sqlclr
+          path: packages
+
       - name: Create release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         env:
@@ -144,4 +189,6 @@ jobs:
           name: ${{ env.CI_BUILD_VERSION }}
           body: ${{ github.event.head_commit.message }}
           draft: true
-          files: packages/*.*nupkg
+          files: |
+            packages/*.*nupkg
+            packages/*.sql

@@ -56,6 +56,13 @@ in Microsoft SQL Server. To use this:
 1. Make sure you have [enabled CLR integration](https://msdn.microsoft.com/en-us/library/ms131048.aspx)
 2. Execute [AhoCorasick.SqlClr_Create.sql](AhoCorasick.SqlClr/dist/AhoCorasick.SqlClr_Create.sql)
 
+Since SQL Server 2017, `clr strict security` is on by default and rejects an unsigned assembly even
+with `PERMISSION_SET = SAFE`, so the script trusts the assembly by its hash through
+[sp_add_trusted_assembly](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sys-sp-add-trusted-assembly-transact-sql),
+which needs `CONTROL SERVER` permission. The script attached to a
+[release](https://github.com/mganss/AhoCorasick/releases) is the one built and tested with that
+version of the package; the copy in this repository is regenerated when a release is prepared.
+
 For one-off queries, you can use the functions that rebuild the trie on each query, e.g.
 
 ```SQL
