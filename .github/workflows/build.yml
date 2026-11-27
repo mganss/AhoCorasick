@@ -43,6 +43,12 @@ jobs:
       - name: Restore
         run: dotnet restore
 
+      # Compiles the sources that AhoCorasick.SqlClr.sqlproj compiles, which SSDT would be needed to
+      # build here. Warnings are errors so that the SQL CLR functions cannot start depending on a
+      # deprecated part of the library unnoticed.
+      - name: Build SQL CLR sources
+        run: dotnet build AhoCorasick.SqlClr.Build/AhoCorasick.SqlClr.Build.csproj -c Release -warnaserror
+
       - name: Pack
         run: dotnet pack --include-symbols --include-source -c Release AhoCorasick -o packages
 

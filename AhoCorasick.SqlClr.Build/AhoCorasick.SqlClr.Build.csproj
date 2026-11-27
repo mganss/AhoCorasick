@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Compiles the same sources as AhoCorasick.SqlClr.sqlproj, so that a change to the library that
+    breaks the SQL CLR functions fails the build instead of being found when the SQL CLR script is
+    regenerated. Only a compile check: building the .sqlproj itself needs SSDT, which the build
+    agents do not have, and that is only needed to produce AhoCorasick.SqlClr/dist.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net40</TargetFramework>
+    <RootNamespace>AhoCorasick.SqlClr</RootNamespace>
+    <DefineConstants>NET40</DefineConstants>
+    <LangVersion>latest</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <IsPackable>false</IsPackable>
+    <SonarQubeExclude>true</SonarQubeExclude>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The same files, in the same order, as the Compile items of the .sqlproj. -->
+    <Compile Include="..\AhoCorasick\AhoCorasick.cs" Link="AhoCorasick.cs" />
+    <Compile Include="..\AhoCorasick\CharComparer.cs" Link="CharComparer.cs" />
+    <Compile Include="..\AhoCorasick\Trie.cs" Link="Trie.cs" />
+    <Compile Include="..\AhoCorasick.SqlClr\Contains.cs" Link="Contains.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+</Project>
