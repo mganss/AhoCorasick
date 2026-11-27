@@ -166,12 +166,15 @@ namespace Ganss.Text.Tests
         [Test]
         public void LongWordTest()
         {
-            // Trie.Add walks the word rather than recursing, so the length of a word is not limited
-            // by the stack.
-            var longWord = new string('a', 1000) + "b";
+            // Trie.Add walks the word rather than recursing, so the stack does not limit how long a
+            // word can be, and a node builds its prefix on demand rather than holding a copy, so the
+            // memory needed is linear in the length of the word. Holding a copy in every node would
+            // need gigabytes for the word below.
+            const int length = 50000;
+            var longWord = new string('a', length) + "b";
             var ac = new AhoCorasick(longWord, "ab");
             var m = ac.Search(longWord).ToList();
-            var expected = new WordMatchList { { 0, longWord }, { 999, "ab" } };
+            var expected = new WordMatchList { { 0, longWord }, { length - 1, "ab" } };
             Assert.That(m, Is.EquivalentTo(expected));
         }
 
