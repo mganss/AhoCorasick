@@ -130,6 +130,10 @@ namespace Ganss.Text
         {
             node ??= Trie;
 
+            // Words added since the last build can give a node a longer suffix match,
+            // so recompute every failure link instead of keeping the old one.
+            node.Fail = null;
+
             var word = node.Word;
             for (int i = 1; i < word.Length && node.Fail == null; i++)
                 node.Fail = Trie.ExploreFailLink(word, i, word.Length);
