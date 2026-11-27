@@ -13,15 +13,25 @@ namespace Ganss.Text.Tests
     /// </summary>
     public class RandomizedTests
     {
-        // A single batch of words, and how they are handed to AhoCorasick:
-        // via Add(IEnumerable<string>), which builds the failure links itself, or
-        // via Add(string) per word followed by an explicit BuildFail().
+        // How a batch of words is handed to AhoCorasick.
+        private enum AddMode
+        {
+            // Add(IEnumerable<string>), which builds the failure links itself.
+            Enumerable,
+
+            // Add(string) per word, followed by an explicit BuildFail().
+            StringsThenBuild,
+
+            // Add(string) per word and no build, leaving that to Search.
+            Strings,
+        }
+
         private sealed class Batch
         {
             public List<string> Words = [];
-            public bool ViaEnumerable;
+            public AddMode Mode;
 
-            public Batch Clone() => new() { Words = [.. Words], ViaEnumerable = ViaEnumerable };
+            public Batch Clone() => new() { Words = [.. Words], Mode = Mode };
         }
 
         private const string Alphabet = "abc";
@@ -62,14 +72,14 @@ namespace Ganss.Text.Tests
 
             foreach (var batch in batches)
             {
-                if (batch.ViaEnumerable)
+                if (batch.Mode == AddMode.Enumerable)
                 {
                     ac.Add(batch.Words);
                 }
                 else
                 {
                     foreach (var word in batch.Words) ac.Add(word);
-                    ac.BuildFail();
+                    if (batch.Mode == AddMode.StringsThenBuild) ac.BuildFail();
                 }
             }
 
@@ -132,7 +142,12 @@ namespace Ganss.Text.Tests
 
         private static string Describe(List<Batch> batches, string text)
         {
-            var plan = batches.Select(b => (b.ViaEnumerable ? "Add([" : "Add each + BuildFail([") + string.Join(", ", b.Words) + "])");
+            var plan = batches.Select(b => b.Mode switch
+            {
+                AddMode.Enumerable => $"Add([{string.Join(", ", b.Words)}])",
+                AddMode.StringsThenBuild => $"Add each of [{string.Join(", ", b.Words)}] + BuildFail()",
+                _ => $"Add each of [{string.Join(", ", b.Words)}]",
+            });
             return $"{string.Join(" then ", plan)}, Search(\"{text}\")"
                 + $"{Environment.NewLine}actual:   {string.Join(", ", Normalize(TrieSearch(batches, text)))}"
                 + $"{Environment.NewLine}expected: {string.Join(", ", Normalize(BruteForceSearch(batches, text)))}";
@@ -161,7 +176,7 @@ namespace Ganss.Text.Tests
         public void SearchMatchesBruteForceTest(int seed)
         {
             AssertMatchesBruteForce(seed, random =>
-                [new Batch { Words = RandomWords(random, 6, 4), ViaEnumerable = true }]);
+                [new Batch { Words = RandomWords(random, 6, 4), Mode = AddMode.Enumerable }]);
         }
 
         [TestCase(1)]
@@ -171,11 +186,12 @@ namespace Ganss.Text.Tests
         {
             // Words added after the trie was built can give a node a longer failure link than the one it
             // got on an earlier build, which used to be missed and lost matches of the words added last.
+            // Batches that leave the trie unbuilt cover Search building the failure nodes itself.
             AssertMatchesBruteForce(seed, random =>
                 [.. Enumerable.Range(0, random.Next(2, 5)).Select(_ => new Batch
                 {
                     Words = RandomWords(random, 3, 4),
-                    ViaEnumerable = random.Next(2) == 0,
+                    Mode = (AddMode)random.Next(3),
                 })]);
         }
     }

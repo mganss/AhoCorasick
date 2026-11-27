@@ -144,5 +144,70 @@ namespace Ganss.Text.Tests
             expected = new WordMatchList { { 0, "a" }, { 0, "aca" }, { 1, "ca" }, { 2, "a" } };
             Assert.That(m, Is.EquivalentTo(expected));
         }
+
+        [Test]
+        public void SearchBuildsFailNodesTest()
+        {
+            // Add(string) does not build the failure nodes, Search has to do it.
+            var ac = new AhoCorasick("aca");
+            ac.Add("ca");
+            var expected = new WordMatchList { { 0, "aca" }, { 1, "ca" } };
+            Assert.That(ac.Search("aca").ToList(), Is.EquivalentTo(expected));
+
+            // A second search gives the same result.
+            Assert.That(ac.Search("aca").ToList(), Is.EquivalentTo(expected));
+
+            // The same for an instance that was never built at all.
+            ac = new AhoCorasick();
+            ac.Add("ca");
+            Assert.That(ac.Search("aca").ToList(), Is.EquivalentTo(new WordMatchList { { 1, "ca" } }));
+        }
+
+        [Test]
+        public void SearchDoesNotRebuildFailNodesTest()
+        {
+            var ac = new CountingAhoCorasick();
+            ac.Add("aca");
+            ac.Add("ca");
+
+            Assert.That(ac.ExploreFailLinkCount, Is.Zero, "Add should not build the failure nodes");
+
+            ac.Search("aca").ToList();
+            var afterFirstSearch = ac.ExploreFailLinkCount;
+            Assert.That(afterFirstSearch, Is.Positive, "Search should build the failure nodes");
+
+            // Nothing was added, so searching again must not build them again.
+            ac.Search("aca").ToList();
+            Assert.That(ac.ExploreFailLinkCount, Is.EqualTo(afterFirstSearch));
+
+            // Adding another word makes the next search build them again.
+            ac.Add("c");
+            ac.Search("aca").ToList();
+            Assert.That(ac.ExploreFailLinkCount, Is.GreaterThan(afterFirstSearch));
+        }
+
+        /// <summary>
+        /// Counts how often failure links are explored. Only the root node is asked for failure links,
+        /// so counting on the root is enough.
+        /// </summary>
+        private sealed class CountingTrie : Trie
+        {
+            public int ExploreFailLinkCount { get; private set; }
+
+            public override Trie ExploreFailLink(string word, int startIndex, int endIndex)
+            {
+                ExploreFailLinkCount++;
+                return base.ExploreFailLink(word, startIndex, endIndex);
+            }
+        }
+
+        private sealed class CountingAhoCorasick : AhoCorasick
+        {
+            private readonly CountingTrie countingTrie = new();
+
+            public CountingAhoCorasick() => Trie = countingTrie;
+
+            public int ExploreFailLinkCount => countingTrie.ExploreFailLinkCount;
+        }
     }
 }

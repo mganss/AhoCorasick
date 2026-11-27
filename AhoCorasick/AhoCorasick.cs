@@ -38,8 +38,12 @@ namespace Ganss.Text
         protected Trie Trie { get; set; }
 
         /// <summary>
+        /// Whether words have been added since the failure nodes were last built.
+        /// </summary>
+        private bool needsBuildFail;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
-        /// <remarks>Does not build the failure nodes. Call <see cref="BuildFail"/> after adding words before calling <see cref="Search"/>.</remarks>
         /// </summary>
         public AhoCorasick()
         {
@@ -49,7 +53,6 @@ namespace Ganss.Text
         /// <summary>
         /// Initializes a new instance of the <see cref="AhoCorasick"/> class.
         /// </summary>
-        /// <remarks>Does not build the failure nodes. Call <see cref="BuildFail"/> after adding words before calling <see cref="Search"/>.</remarks>
         /// <param name="comparer">The comparer used to compare individual characters.</param>
         public AhoCorasick(IEqualityComparer<char> comparer)
         {
@@ -101,19 +104,25 @@ namespace Ganss.Text
         /// <summary>
         /// Adds the specified word.
         /// </summary>
-        /// <remarks>Does not build the failure nodes. Call <see cref="BuildFail"/> after adding words before calling <see cref="Search"/>.</remarks>
+        /// <remarks>Does not build the failure nodes. <see cref="Search"/> builds them when needed,
+        /// call <see cref="BuildFail"/> explicitly to control when that happens.</remarks>
         /// <param name="word">The word.</param>
         public void Add(string word)
         {
+            // Set before adding, so that a word that fails to be added does not leave the
+            // failure nodes marked as up to date.
+            needsBuildFail = true;
             Trie.Add(word);
         }
 
         /// <summary>
-        /// Adds the specified words.
+        /// Adds the specified words and builds the failure nodes.
         /// </summary>
         /// <param name="words">The words.</param>
         public void Add(IEnumerable<string> words)
         {
+            needsBuildFail = true;
+
             foreach (var word in words)
             {
                 Trie.Add(word);
@@ -125,9 +134,13 @@ namespace Ganss.Text
         /// <summary>
         /// Builds the failure nodes necessary to perform search.
         /// </summary>
-        /// <param name="node">The start node.</param>
+        /// <remarks>Can be called repeatedly. Every failure node is recomputed, so words added since
+        /// the last build are taken into account.</remarks>
+        /// <param name="node">The start node. Pass <c>null</c> to build the whole trie.</param>
         public void BuildFail(Trie node = null)
         {
+            var wholeTrie = node == null;
+
             node ??= Trie;
 
             // Words added since the last build can give a node a longer suffix match,
@@ -140,14 +153,34 @@ namespace Ganss.Text
 
             foreach (var subNode in node.Next.Values)
                 BuildFail(subNode);
+
+            // Only a build that started at the root leaves the whole trie searchable.
+            if (wholeTrie) needsBuildFail = false;
         }
 
         /// <summary>
         /// Searches for words in the specified text.
         /// </summary>
+        /// <remarks>Builds the failure nodes first if words have been added since they were last built.
+        /// Because that modifies the trie, searching an instance that words were added to without
+        /// calling <see cref="BuildFail"/> is not thread safe.</remarks>
         /// <param name="text">The text.</param>
         /// <returns>The matched words.</returns>
         public virtual IEnumerable<WordMatch> Search(string text)
+        {
+            // Not an iterator method, so this happens when Search is called rather than
+            // when the result is first enumerated.
+            if (needsBuildFail) BuildFail();
+
+            return SearchBuilt(text);
+        }
+
+        /// <summary>
+        /// Searches for words in the specified text, assuming the failure nodes have been built.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns>The matched words.</returns>
+        private IEnumerable<WordMatch> SearchBuilt(string text)
         {
             if (text == null) yield break;
 

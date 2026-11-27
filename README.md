@@ -34,6 +34,20 @@ You can optionally supply an `IEqualityComparer<char>` to perform custom char co
 var results = "AbCcab".Contains(CharComparer.OrdinalIgnoreCase, "a", "ab", "c").ToList();
 ```
 
+### Adding words later
+
+You can add words to an existing instance at any time, `Search` picks them up:
+
+```C#
+var ac = new AhoCorasick("a", "ab");
+ac.Add("bc");
+var results = ac.Search("abc").ToList(); // a, ab, bc
+```
+
+Adding words invalidates the failure links that `Search` needs, so the next `Search` rebuilds them.
+Call `BuildFail` yourself after the last `Add` if you want to decide when that work happens, or if
+the instance is searched from several threads.
+
 ## SQL CLR Functions
 
 There are also several SQL CLR user defined functions that can be used to perform fast substring matching
