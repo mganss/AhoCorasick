@@ -30,7 +30,8 @@ function Invoke-Test([string] $query) {
 
 function Assert-Equal($expected, $actual, [string] $what) {
     if ("$actual" -ne "$expected") { throw "$what : expected [$expected] but got [$actual]" }
-    Write-Host "ok  $what = $actual"
+    # Write-Information rather than Write-Host so that the function stays usable in a pipeline.
+    Write-Information "ok  $what = $actual" -InformationAction Continue
 }
 
 Write-Host "Enabling CLR integration on $Server"
@@ -52,8 +53,9 @@ $hit = Invoke-Test "select dbo.ContainsWords('$words', N'aca', 'o') as Hit"
 Assert-Equal $true $hit.Hit 'ContainsWords'
 
 $rows = Invoke-Test "select * from dbo.ContainsWordsTable('$words', N'aca', 'o') order by [Index]"
-$matches = ($rows | ForEach-Object { "$($_.Index):$($_.Word)" }) -join ', '
-Assert-Equal '0:aca, 1:ca' $matches 'ContainsWordsTable'
+# Not $matches, which is a PowerShell automatic variable.
+$found = ($rows | ForEach-Object { "$($_.Index):$($_.Word)" }) -join ', '
+Assert-Equal '0:aca, 1:ca' $found 'ContainsWordsTable'
 
 $miss = Invoke-Test "select dbo.ContainsWords('$words', N'bb', 'o') as Hit"
 Assert-Equal $false $miss.Hit 'ContainsWords with no match'

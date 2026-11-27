@@ -169,28 +169,38 @@ namespace Ganss.Text
 
                 foreach (var next in current.Next)
                 {
-                    var c = next.Key;
-                    var child = next.Value;
-
-                    // The longest suffix of the current word that can be extended by c.
-                    var fail = current.Fail;
-
-                    while (fail != null && !fail.Next.ContainsKey(c))
-                        fail = fail.Fail;
-
-                    child.Fail = (fail ?? Trie).Next.TryGetValue(c, out var suffix) ? suffix : null;
-
-                    // The nearest word on the failure chain, so that Search does not have to walk
-                    // the whole chain to find the words ending at a position.
-                    child.WordFail = child.Fail == null ? null
-                        : child.Fail.IsWord ? child.Fail
-                        : child.Fail.WordFail;
-
-                    queue.Enqueue(child);
+                    LinkFailNodes(current, next.Key, next.Value);
+                    queue.Enqueue(next.Value);
                 }
             }
 
             NeedsBuildFail = false;
+        }
+
+        /// <summary>
+        /// Sets the failure node of a child node, and the nearest word on its failure chain.
+        /// </summary>
+        /// <param name="parent">The parent node, whose failure node must be known already.</param>
+        /// <param name="c">The character the parent maps to the child by.</param>
+        /// <param name="child">The child node.</param>
+        private void LinkFailNodes(Trie parent, char c, Trie child)
+        {
+            // The longest suffix of the parent's word that can be extended by c.
+            var fail = parent.Fail;
+
+            while (fail != null && !fail.Next.ContainsKey(c))
+                fail = fail.Fail;
+
+            child.Fail = (fail ?? Trie).Next.TryGetValue(c, out var suffix) ? suffix : null;
+
+            // The nearest word on the failure chain, so that Search does not have to walk the whole
+            // chain to find the words ending at a position.
+            if (child.Fail == null)
+                child.WordFail = null;
+            else if (child.Fail.IsWord)
+                child.WordFail = child.Fail;
+            else
+                child.WordFail = child.Fail.WordFail;
         }
 
         /// <summary>

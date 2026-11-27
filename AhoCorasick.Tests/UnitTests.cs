@@ -179,6 +179,18 @@ namespace Ganss.Text.Tests
         }
 
         [Test]
+        public void ExploreFailLinkTest()
+        {
+            // Obsolete and no longer used to build the failure nodes, but still callable.
+            var ac = new ExposedAhoCorasick("aca", "ca");
+#pragma warning disable CS0618 // Type or member is obsolete
+            Assert.That(ac.Root.ExploreFailLink("aca", 1, 3).Word, Is.EqualTo("ca"));
+            Assert.That(ac.Root.ExploreFailLink("aca", 2, 3).Word, Is.EqualTo("a"));
+            Assert.That(ac.Root.ExploreFailLink("xyz", 0, 3), Is.Null);
+#pragma warning restore CS0618
+        }
+
+        [Test]
         public void SearchOrderTest()
         {
             // Matches come out by the position they end at, longest first within a position. Not part
@@ -227,6 +239,11 @@ namespace Ganss.Text.Tests
             Assert.That(ac.NeedsBuildFail, Is.False);
             var expected = new WordMatchList { { 0, "aca" }, { 1, "ca" } };
             Assert.That(ac.Search("aca").ToList(), Is.EquivalentTo(expected));
+        }
+
+        private sealed class ExposedAhoCorasick(params string[] words) : AhoCorasick(words)
+        {
+            public Trie Root => Trie;
         }
 
         private sealed class SubtreeAhoCorasick : AhoCorasick
